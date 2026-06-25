@@ -18,15 +18,16 @@ set(COMPILE_OPTIONS
 	-mmcu=$ENV{AVR_MCU_NAME}
 	-DF_CPU=$ENV{AVR_MCU_FREQ}
 	-DARDUINO=20000
+	-DARDUINO_AVR_MEGA2560
+	-DARDUINO_ARCH_AVR
 	-D__AVR__
+	-D__AVR_ATmega2560__
 	-Wall
 	-Wextra
 	-Wno-unused-variable
 	-fno-exceptions
 	-ffunction-sections
 	-fdata-sections
-	-fno-threadsafe-statics
-	-flto
 	-Os
 )
 
@@ -44,9 +45,13 @@ set(LINK_OPTIONS
 	-g
 	-mmcu=$ENV{AVR_MCU_NAME}
 	-fuse-linker-plugin
-	-flto
-	-O2
+	-O1
 	-Wl,-m$ENV{AVR_MCU_ARCH},--gc-sections
+)
+
+link_directories(
+	${AVR_TC_DIR}/../lib/gcc/avr/7.3.0/$ENV{AVR_MCU_ARCH} ####
+	${AVR_TC_DIR}/../avr/lib/$ENV{AVR_MCU_ARCH}
 )
 
 function(apply_common_target_settings target_name)
@@ -67,6 +72,7 @@ function(compile_library lib_dir)
 	file(
 		GLOB_RECURSE LIB_SOURCE_FILES
 		CONFIGURE_DEPENDS
+		"${lib_dir}/*.S"
 		"${lib_dir}/*.c"
 		"${lib_dir}/*.cc"
 		"${lib_dir}/*.cpp"
@@ -79,14 +85,10 @@ function(compile_library lib_dir)
 	list(APPEND LIBRARY_TARGETS ${LIB_TARGET_NAME})
 endfunction()
 
+compile_library("${AVR_HW_DIR}/cores/arduino")
+
 compile_library("${AVR_HW_DIR}/libraries/SPI")
 compile_library("${AVR_HW_DIR}/libraries/Wire")
-
-compile_library("lib/MCUFRIEND_kbv")
-target_include_directories(MCUFRIEND_kbv PUBLIC
-	lib/Adafruit-GFX-Library
-	lib/Adafruit_BusIO
-)
 
 compile_library("lib/Adafruit-GFX-Library")
 target_include_directories(Adafruit_GFX_Library PUBLIC
@@ -103,8 +105,8 @@ set(TARGET_NAME ${PROJECT_NAME}.elf)
 add_executable(${TARGET_NAME} ${SOURCE_FILES})
 apply_common_target_settings(${TARGET_NAME})
 
-target_link_libraries(${TARGET_NAME} PRIVATE ${LIBRARY_TARGETS} ${LINK_OPTIONS})
 target_link_options(${TARGET_NAME} PUBLIC ${LINK_OPTIONS})
+target_link_libraries(${TARGET_NAME} PUBLIC ${LIBRARY_TARGETS})
 
 add_custom_command(
 	TARGET ${TARGET_NAME}

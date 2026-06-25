@@ -7,7 +7,7 @@ PORT := /dev/ttyACM0
 build: compile upload
 
 compile:
-	(mkdir -p build/artifacts && cd build; cmake .. && make -j$$(nproc))
+	(mkdir -p build/artifacts && cd build; cmake .. && make -j$$(echo 1))
 
 upload:
 	@$(call WaitPlugIn)
