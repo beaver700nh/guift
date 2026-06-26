@@ -7,16 +7,13 @@ PORT := /dev/ttyACM0
 build: compile upload
 
 compile:
-	(mkdir -p build/artifacts && cd build; cmake .. && make -j$$(echo 1))
+	arduino-cli compile --fqbn arduino:avr:mega .
 
 upload:
 	@$(call WaitPlugIn)
-	~/.arduino*/packages/arduino/tools/avrdude/*/bin/avrdude -c wiring -p $(AVR_MCU_NAME) -P $(PORT) -b 115200 -D -U flash:w:build/artifacts/guift.elf.hex:i
+	arduino-cli upload -p $(PORT) --fqbn arduino:avr:mega .
 
 define WaitPlugIn
 	while [ ! -e $(PORT) ]; do printf .; sleep 2; done
 	echo
 endef
-
-clean:
-	rm -r build

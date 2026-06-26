@@ -1,2 +1,2 @@
-__cmake*/
-build/
+.zed/
+.clangd
