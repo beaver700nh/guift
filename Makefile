@@ -10,15 +10,19 @@ all: build monitor
 build: compile upload
 
 compile:
-	arduino-cli compile --fqbn $(BOARD) .
+	arduino-cli compile --fqbn $(BOARD)
 
 upload:
 	@$(call WaitPlugIn)
-	arduino-cli upload --fqbn $(BOARD) --port $(PORT) --verbose .
+	arduino-cli upload --fqbn $(BOARD) --port $(PORT) --verbose
 
 monitor:
 	@$(call WaitPlugIn)
 	arduino-cli monitor --fqbn $(BOARD) --port $(PORT) --config baudrate=115200
+
+.PHONY: demo
+demo:
+	pushd demo/$(NAME) && arduino-cli compile --fqbn $(BOARD) && arduino-cli upload --fqbn $(BOARD) --port $(PORT) && popd
 
 define WaitPlugIn
 	while [ ! -e $(PORT) ]; do printf .; sleep 2; done
