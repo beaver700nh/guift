@@ -39,11 +39,19 @@ using Size = CartesianVec2d<uint16_t>;
 
 struct CornerRect {
 	Point a, b;
+
+	inline bool contains(const Point &p) const {
+		return p.x >= a.x && p.x < b.x && p.y >= a.y && p.y < b.y;
+	}
 };
 
 struct BoxRect {
 	Point origin;
 	Size size;
+
+	inline operator CornerRect() const {
+		return {origin, origin + size};
+	}
 };
 
 }

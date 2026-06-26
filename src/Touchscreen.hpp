@@ -26,6 +26,8 @@ public:
 	};
 
 	enum class QuadrilateralMode {
+		// Rectangular is faster to calculate but suffers in accuracy, especially
+		// for displays with very trapezoidal calibrations.
 		FREE,
 		RECTANGULAR,
 	};
