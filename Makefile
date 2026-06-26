@@ -3,15 +3,22 @@ export AVR_MCU_FREQ := 16000000
 export AVR_MCU_ARCH := avr6
 
 PORT := /dev/ttyACM0
+BOARD := arduino:avr:mega
+
+all: build monitor
 
 build: compile upload
 
 compile:
-	arduino-cli compile --fqbn arduino:avr:mega .
+	arduino-cli compile --fqbn $(BOARD) .
 
 upload:
 	@$(call WaitPlugIn)
-	arduino-cli upload -p $(PORT) --fqbn arduino:avr:mega .
+	arduino-cli upload --fqbn $(BOARD) --port $(PORT) --verbose .
+
+monitor:
+	@$(call WaitPlugIn)
+	arduino-cli monitor --fqbn $(BOARD) --port $(PORT) --config baudrate=115200
 
 define WaitPlugIn
 	while [ ! -e $(PORT) ]; do printf .; sleep 2; done
