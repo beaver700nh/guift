@@ -11,7 +11,7 @@ class Touchscreen: private TouchScreen {
 public:
 	struct Calibration {
 		// Origin is at bottom left of orientation 0
-		geom::Point xMinYMin, xMaxYMin, xMinYMax, xMaxYMax, center;
+		geom::CartesianVec2d<int16_t> xMinYMin, xMaxYMin, xMinYMax, xMaxYMax, center;
 	};
 
 	struct Touch: public TSPoint {
@@ -50,7 +50,20 @@ private:
 	MCUFRIEND_kbv *tft;
 
 	geom::Size pixelSize;
-	geom::CornerRect minRect;
+
+	union {
+		geom::CornerRect minRect;
+		struct {
+			struct {
+				float xMinYMin, xMaxYMin, xMinYMax, xMaxYMax;
+			} slopes; // of the diagonals
+			struct {
+				geom::CartesianVec2d<double> xMin, xMax, yMin, yMax; // sin/cos pairs
+			} angles; // of the sides
+		};
+	} memo;
+
+	void memoizeCalculationHelpers();
 };
 
 }

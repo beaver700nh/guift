@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <WString.h>
 
 namespace guift {
 namespace geom {
@@ -17,12 +17,24 @@ struct CartesianVec2d {
 		return !(*this == other);
 	}
 
-	inline CartesianVec2d<T> operator+(const CartesianVec2d<T> &other) const {
-		return {x + other.x, y + other.y};
+	inline double distanceTo(const CartesianVec2d<T> &other) const {
+		return distance(*this, other);
 	}
 
+	static inline double distance(const CartesianVec2d<T> &p, const CartesianVec2d<T> &q) {
+		auto a = (double) p.x - q.x;
+		auto b = (double) p.y - q.y;
+		return sqrt(a * a + b * b);
+	}
+
+	// Assumes calculation will not overflow
+	inline CartesianVec2d<T> operator+(const CartesianVec2d<T> &other) const {
+		return {static_cast<T>(x + other.x), static_cast<T>(y + other.y)};
+	}
+
+	// Assumes calculation will not overflow
 	inline CartesianVec2d<T> operator-(const CartesianVec2d<T> &other) const {
-		return {x - other.x, y - other.y};
+		return {static_cast<T>(x - other.x), static_cast<T>(y - other.y)};
 	}
 
 	inline CartesianVec2d<T> operator*(const T &scalar) const {
@@ -31,6 +43,14 @@ struct CartesianVec2d {
 
 	inline CartesianVec2d<T> operator/(const T &scalar) const {
 		return *this * (1.0 / scalar);
+	}
+
+	inline CartesianVec2d<double> scaledBy(double scalar) const {
+		return {x * scalar, y * scalar};
+	}
+
+	inline operator String() const {
+		return String("(") + x + ", " + y + ")";
 	}
 };
 
@@ -42,6 +62,10 @@ struct CornerRect {
 
 	inline bool contains(const Point &p) const {
 		return p.x >= a.x && p.x < b.x && p.y >= a.y && p.y < b.y;
+	}
+
+	inline operator String() const {
+		return String("[") + a + ", " + b + "]";
 	}
 };
 

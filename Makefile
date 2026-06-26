@@ -10,7 +10,7 @@ all: build monitor
 build: compile upload
 
 compile:
-	arduino-cli compile --fqbn $(BOARD)
+	arduino-cli compile --fqbn $(BOARD) --verbose
 
 upload:
 	@$(call WaitPlugIn)
