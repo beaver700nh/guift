@@ -2,7 +2,7 @@ export AVR_MCU_NAME := atmega2560
 export AVR_MCU_FREQ := 16000000
 export AVR_MCU_ARCH := avr6
 
-PORT := /dev/ttyACM0
+PORT := $$(echo $$({ ls /dev/ttyACM* 2>/dev/null || echo '/dev/ttyACM0'; } | head -n1))
 BOARD := arduino:avr:mega
 
 all: build monitor

@@ -9,6 +9,14 @@ template<typename T>
 struct CartesianVec2d {
 	T x, y;
 
+	template<typename U, typename V>
+	static inline CartesianVec2d<T> from(U x, V y) {
+		return {
+			static_cast<T>(x),
+			static_cast<T>(y),
+		};
+	}
+
 	inline bool operator==(const CartesianVec2d<T> &other) const {
 		return x == other.x && y == other.y;
 	}
@@ -17,31 +25,35 @@ struct CartesianVec2d {
 		return !(*this == other);
 	}
 
+	inline double length() const {
+		return sqrt(0.0 + x * x + y * y);
+	}
+
 	inline double distanceTo(const CartesianVec2d<T> &other) const {
 		return distance(*this, other);
 	}
 
 	static inline double distance(const CartesianVec2d<T> &p, const CartesianVec2d<T> &q) {
-		auto a = (double) p.x - q.x;
-		auto b = (double) p.y - q.y;
-		return sqrt(a * a + b * b);
+		return (p - q).length();
 	}
 
 	// Assumes calculation will not overflow
-	inline CartesianVec2d<T> operator+(const CartesianVec2d<T> &other) const {
+	template<typename U>
+	inline CartesianVec2d<T> operator+(const CartesianVec2d<U> &other) const {
 		return {static_cast<T>(x + other.x), static_cast<T>(y + other.y)};
 	}
 
 	// Assumes calculation will not overflow
-	inline CartesianVec2d<T> operator-(const CartesianVec2d<T> &other) const {
+	template<typename U>
+	inline CartesianVec2d<T> operator-(const CartesianVec2d<U> &other) const {
 		return {static_cast<T>(x - other.x), static_cast<T>(y - other.y)};
 	}
 
-	inline CartesianVec2d<T> operator*(const T &scalar) const {
+	inline CartesianVec2d<T> operator*(double scalar) const {
 		return {x * scalar, y * scalar};
 	}
 
-	inline CartesianVec2d<T> operator/(const T &scalar) const {
+	inline CartesianVec2d<T> operator/(double scalar) const {
 		return *this * (1.0 / scalar);
 	}
 
@@ -49,12 +61,16 @@ struct CartesianVec2d {
 		return {x * scalar, y * scalar};
 	}
 
+	inline operator CartesianVec2d<double>() const {
+		return {x, y};
+	}
+
 	inline operator String() const {
 		return String("(") + x + ", " + y + ")";
 	}
 };
 
-using Point = CartesianVec2d<uint16_t>;
+using Point = CartesianVec2d<int16_t>;
 using Size = CartesianVec2d<uint16_t>;
 
 struct CornerRect {
@@ -73,6 +89,7 @@ struct BoxRect {
 	Point origin;
 	Size size;
 
+	// Assumes the rectangle is sufficiently small to not overflow
 	inline operator CornerRect() const {
 		return {origin, origin + size};
 	}

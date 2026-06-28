@@ -11,13 +11,13 @@ class Touchscreen: private TouchScreen {
 public:
 	struct Calibration {
 		// Origin is at bottom left of orientation 0
-		geom::CartesianVec2d<int16_t> xMinYMin, xMaxYMin, xMinYMax, xMaxYMax, center;
+		geom::Point xMinYMin, xMaxYMin, xMinYMax, xMaxYMax, center;
 	};
 
 	struct Touch: public TSPoint {
-		Touch() = default;
-		Touch(int16_t x, int16_t y, int16_t z): TSPoint {x, y, z} {}
-		Touch(const TSPoint &point): TSPoint {point.x, point.y, point.z} {}
+		inline Touch() = default;
+		inline Touch(int16_t x, int16_t y, int16_t z): TSPoint {x, y, z} {}
+		inline Touch(const TSPoint &point): TSPoint {point.x, point.y, point.z} {}
 
 		static inline bool isValid(const TSPoint &point) {
 			// Pressure might not be supported past a binary extent
@@ -37,10 +37,15 @@ public:
 	void begin(QuadrilateralMode mode);
 
 	bool isTouching();
-	void waitForTouch();
 
 	Touch getTouch();
+	Touch waitTouch();
 	TSPoint getRawTouch();
+	TSPoint waitRawTouch();
+
+	Touch correctForRotation(const Touch &p);
+
+	static Calibration runCalibration(uint8_t xp, uint8_t xm, uint8_t yp, uint8_t ym, uint16_t rx, MCUFRIEND_kbv *tft);
 
 private:
 	uint8_t _xm, _yp;
@@ -53,17 +58,21 @@ private:
 
 	union {
 		geom::CornerRect minRect;
+
 		struct {
+			geom::Point trueCenter;
 			struct {
 				float xMinYMin, xMaxYMin, xMinYMax, xMaxYMax;
 			} slopes; // of the diagonals
 			struct {
-				geom::CartesianVec2d<double> xMin, xMax, yMin, yMax; // sin/cos pairs
-			} angles; // of the sides
-		};
+				geom::CartesianVec2d<double> xMin, xMax, yMin, yMax;
+			} edges;
+		} ;
 	} memo;
 
 	void memoizeCalculationHelpers();
+
+	Touch calculateFreeTouch(const TSPoint &p);
 };
 
 }
