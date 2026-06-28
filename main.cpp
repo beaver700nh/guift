@@ -24,14 +24,27 @@ void setup() {
 	using namespace guift::ui;
 
 	tft.fillScreen(guift::color::black);
-	tft.render(Text {"[This is a TEST!!!]", Text::Style {}.setFg(guift::color::red)});
-	tft.render(Text {"test 2"});
-	tft.render(Text {"test 3", Text::Style {}.setPosition({100, 100}).setSize(3)});
-	tft.render(Text {"test 4", Text::Style {}
-		.setSize(1)
-		.setBg(+guift::color::darkGray)});
-}
 
+	tft.render(
+		Text {"[THIS IS A TEST!!]\nhi", Text::Style {}
+			.setFg(guift::color::red)
+			.setBg(+guift::color::lightGray)}
+	);
+	tft.render(
+		Text {"test 2"}
+	);
+	tft.render(
+		Text {"test 3", Text::Style {}
+			.setPosition({100, 100})
+			.setSize(3)}
+	);
+	tft.render(
+		Text {"test 4", Text::Style {}
+			.setSize(1)
+			.setFg(guift::color::green)
+			.setBg(+guift::color::darkGray)}
+	);
+}
 
 void loop() {
 }

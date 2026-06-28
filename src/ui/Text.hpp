@@ -51,10 +51,6 @@ public:
 		text {text},
 		style {style} {};
 
-	static inline Style &of(String text) {
-		return MutableText {text}.getStyle();
-	}
-
 	inline String getText() const {
 		return text;
 	}
