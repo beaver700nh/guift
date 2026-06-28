@@ -21,21 +21,28 @@ void setup() {
 	tft.begin(0x9486);
 	ts.begin(guift::Touchscreen::QuadrilateralMode::FREE);
 
-	using namespace guift::ui;
-
 	tft.fillScreen(guift::color::black);
-
-	// tft.render(
-	// 	Box {
-	// 		// Box::Style {}
-	// 		// 	.setPosition({10, 10})
-	// 		// 	.setSize({100, 100})
-	// 		// 	.setFill(guift::color::red)
-	// 		// 	.setBorder(guift::color::green)
-	// 		// 	.setRoundness(10)
-	// 	}
-	// );
 }
 
 void loop() {
+	using namespace guift::ui;
+
+	static bool flag = false;
+	static Box box {BoxStyle {}
+		.setFill(+guift::color::red)
+		.setSize({80, 80})
+		.setThickness(5)
+		.setRoundness(15)};
+
+	if (flag) {
+		box.getStyle().setBorder(+guift::color::yellowGreen);
+	} else {
+		box.getStyle().setBorder(guift::color::transparent);
+	}
+
+	flag = !flag;
+	tft.render(box);
+
+	delay(200);
+	while (!ts.isTouching());
 }

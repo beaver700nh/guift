@@ -57,21 +57,21 @@ public:
 
 private:
 	inline void renderTo(Display *tft) const {
-		auto isStatic = this->style.position.isPositive();
+		auto isStatic = style.position.isPositive();
 		geom::Point position;
 
 		if (isStatic) {
-			tft->setCursor(this->style.position.x, this->style.position.y);
-			position = this->style.position;
+			tft->setCursor(style.position.x, style.position.y);
+			position = style.position;
 		}
 		else {
 			position = geom::Point {tft->getCursorX(), tft->getCursorY()};
 		}
 
-		tft->setTextSize(this->style.size);
+		tft->setTextSize(style.size);
 		tft->setTextColor(
-			this->style.fg,
-			this->style.bg == color::transparent ? this->style.fg : this->style.bg
+			style.fg,
+			style.bg == color::transparent ? style.fg : style.bg
 		);
 
 		tft->print(text);

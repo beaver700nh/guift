@@ -9,59 +9,128 @@ namespace guift {
 
 namespace ui {
 
-#if 0
-class Box: public _BaseElement {
+struct BoxStyle {
+	geom::Point position {0, 0};
+	geom::Size size {100, 100};
+	color::Color fill = +color::gray1;
+	color::Color border = +color::gray5;
+	uint8_t thickness = 1;
+	uint8_t roundness = 1;
+
+	inline auto &setPosition(geom::Point position) {
+		this->position = position;
+		return *this;
+	}
+
+	inline auto &setSize(geom::Size size) {
+		this->size = size;
+		return *this;
+	}
+
+	inline auto &setFill(color::Color fill) {
+		this->fill = fill;
+		return *this;
+	}
+
+	inline auto &setBorder(color::Color border) {
+		this->border = border;
+		return *this;
+	}
+
+	inline auto &setThickness(uint8_t thickness) {
+		this->thickness = thickness;
+		return *this;
+	}
+
+	inline auto &setRoundness(uint8_t roundness) {
+		this->roundness = roundness;
+		return *this;
+	}
+};
+
+class Box: public _BaseElement<BoxStyle> {
 public:
-	struct Style {
-		geom::Point position;
-		geom::Size size;
-		color::Color fill;
-		color::Color border;
-		uint8_t roundness;
+	inline Box(): Box {{}} {};
 
-		inline Style():
-			position {0, 0},
-			size {100, 100},
-			fill {+color::gray1},
-			border {+color::gray5},
-			roundness {0} {};
+	inline Box(const BoxStyle &style): _BaseElement {style} {
+		// must leave 1-2px that is not the border
+		uint8_t maxBorder = (1 + min(style.size.x, style.size.y)) / 2 - 1;
+
+		// thickness < 1 would just be no border
+		this->style.roundness = constrain(style.roundness, 0, maxBorder);
+		this->style.thickness = constrain(style.thickness, 1, maxBorder);
 	};
-
-	inline Box():
-		Box {{}} {};
-	inline Box(const Style &style):
-		style {style} {};
 
 private:
 	inline void renderTo(Display *tft) const {
-		auto isStatic = style.position.isPositive();
-		geom::Point position;
+		tft->startWrite();
 
-		if (isStatic) {
-			tft->setCursor(style.position.x, style.position.y);
-			position = style.position;
+		auto roundOffset = style.position + geom::Point {style.roundness, style.roundness};
+		auto roundShrunk = style.size - geom::Size {style.roundness, style.roundness} * 2;
+
+		if (style.fill != color::transparent) {
+			tft->writeFillRect(roundOffset.x, style.position.y, roundShrunk.x, style.size.y, style.fill);
+			tft->fillCircleHelper(
+				roundOffset.x,
+				roundOffset.y, style.roundness, 0x2, roundShrunk.y - 1, style.fill
+			);
+			tft->fillCircleHelper(
+				roundOffset.x + roundShrunk.x - 1,
+				roundOffset.y, style.roundness, 0x1, roundShrunk.y - 1, style.fill
+			);
 		}
-		else {
-			position = geom::Point {tft->getCursorX(), tft->getCursorY()};
+
+		auto thickOffset = style.position + geom::Point {style.thickness, style.thickness};
+		auto thickShrunk = style.size - geom::Size {style.thickness, style.thickness} * 2;
+
+		if (style.border != color::transparent && style.border != style.fill) {
+			tft->writeFillRect(
+				style.position.x,
+				roundOffset.y,
+				style.thickness, roundShrunk.y, style.border
+			);
+			tft->writeFillRect(
+				thickOffset.x + thickShrunk.x,
+				roundOffset.y,
+				style.thickness, roundShrunk.y, style.border
+			);
+			tft->writeFillRect(
+				roundOffset.x,
+				style.position.y,
+				roundShrunk.x, style.thickness, style.border
+			);
+			tft->writeFillRect(
+				roundOffset.x,
+				thickOffset.y + thickShrunk.y,
+				roundShrunk.x, style.thickness, style.border
+			);
+
+			for (uint8_t radius = style.roundness; radius > style.roundness - style.thickness; --radius) {
+				tft->drawCircleHelper(
+					roundOffset.x,
+					roundOffset.y,
+					radius, 0x1, style.border
+				);
+				tft->drawCircleHelper(
+					roundOffset.x + roundShrunk.x - 1,
+					roundOffset.y,
+					radius, 0x2, style.border
+				);
+				tft->drawCircleHelper(
+					roundOffset.x,
+					roundOffset.y + roundShrunk.y - 1,
+					radius, 0x8, style.border
+				);
+				tft->drawCircleHelper(
+					roundOffset.x + roundShrunk.x - 1,
+					roundOffset.y + roundShrunk.y - 1,
+					radius, 0x4, style.border
+				);
+			}
 		}
 
-		tft->setTextSize(style.size);
-		tft->setTextColor(style.fg, style.bg == color::transparent ? style.fg : style.bg);
-
-		tft->print(text);
-
-		tft->getTextBounds(
-			text, position.x, position.y,
-			&box.origin.x, &box.origin.y,
-			&box.size.x, &box.size.y
-		);
-
-#ifdef UI_DEBUG
-		tft->drawRect(box.origin.x, box.origin.y, box.size.x, box.size.y, color::yellowGreen);
-#endif
+		tft->endWrite();
 	}
-	Style style;
 };
-#endif
 
 }}
