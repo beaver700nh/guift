@@ -62,5 +62,4 @@ void loop() {
 	tft.print("Tap the screen to restart.");
 
 	while (!ts.isTouching());
-	delay(1000);
 }
