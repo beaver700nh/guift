@@ -4,7 +4,7 @@
 #include "src/Display.hpp"
 #include "src/Touchscreen.hpp"
 
-#include "src/ui/Text.hpp"
+#include "src/ui/Box.hpp"
 
 guift::Display tft;
 guift::Touchscreen ts {
@@ -25,25 +25,16 @@ void setup() {
 
 	tft.fillScreen(guift::color::black);
 
-	tft.render(
-		Text {"[THIS IS A TEST!!]\nhi", Text::Style {}
-			.setFg(guift::color::red)
-			.setBg(+guift::color::lightGray)}
-	);
-	tft.render(
-		Text {"test 2"}
-	);
-	tft.render(
-		Text {"test 3", Text::Style {}
-			.setPosition({100, 100})
-			.setSize(3)}
-	);
-	tft.render(
-		Text {"test 4", Text::Style {}
-			.setSize(1)
-			.setFg(guift::color::green)
-			.setBg(+guift::color::darkGray)}
-	);
+	// tft.render(
+	// 	Box {
+	// 		// Box::Style {}
+	// 		// 	.setPosition({10, 10})
+	// 		// 	.setSize({100, 100})
+	// 		// 	.setFill(guift::color::red)
+	// 		// 	.setBorder(guift::color::green)
+	// 		// 	.setRoundness(10)
+	// 	}
+	// );
 }
 
 void loop() {

@@ -9,47 +9,42 @@ namespace guift {
 
 namespace ui {
 
+struct TextStyle {
+	geom::Point position {-1, -1};
+	uint8_t size = 2;
+	color::OpaqueColor fg = color::white;
+	color::Color bg = color::transparent;
+
+	inline auto &setPosition(geom::Point position) {
+		this->position = position;
+		return *this;
+	}
+
+	inline auto &setSize(uint8_t size) {
+		this->size = size;
+		return *this;
+	}
+
+	inline auto &setFg(color::OpaqueColor fg) {
+		this->fg = fg;
+		return *this;
+	}
+
+	inline auto &setBg(color::Color bg) {
+		this->bg = bg;
+		return *this;
+	}
+};
+
 template<typename Str>
-class MutableText: public _BaseElement {
+class MutableText: public _BaseElement<TextStyle> {
 public:
-	struct Style {
-		geom::Point position;
-		uint8_t size;
-		color::OpaqueColor fg;
-		color::Color bg;
-
-		inline Style():
-			position {-1, -1},
-			size {2},
-			fg {color::white},
-			bg {color::transparent} {};
-
-		inline Style &setPosition(geom::Point position) {
-			this->position = position;
-			return *this;
-		}
-
-		inline Style &setSize(uint8_t size) {
-			this->size = size;
-			return *this;
-		}
-
-		inline Style &setFg(color::OpaqueColor fg) {
-			this->fg = fg;
-			return *this;
-		}
-
-		inline Style &setBg(color::Color bg) {
-			this->bg = bg;
-			return *this;
-		}
-	};
-
 	inline MutableText(Str text):
 		MutableText {text, {}} {};
-	inline MutableText(Str text, const Style &style):
-		text {text},
-		style {style} {};
+
+	inline MutableText(Str text, const TextStyle &style):
+		_BaseElement {style},
+		text {text} {};
 
 	inline Str getText() const {
 		return text;
@@ -60,30 +55,24 @@ public:
 		return *this;
 	}
 
-	inline Style &getStyle() {
-		return style;
-	}
-
-	inline MutableText &setStyle(const Style &style) {
-		this->style = style;
-		return *this;
-	}
-
 private:
 	inline void renderTo(Display *tft) const {
-		auto isStatic = style.position.isPositive();
+		auto isStatic = this->style.position.isPositive();
 		geom::Point position;
 
 		if (isStatic) {
-			tft->setCursor(style.position.x, style.position.y);
-			position = style.position;
+			tft->setCursor(this->style.position.x, this->style.position.y);
+			position = this->style.position;
 		}
 		else {
 			position = geom::Point {tft->getCursorX(), tft->getCursorY()};
 		}
 
-		tft->setTextSize(style.size);
-		tft->setTextColor(style.fg, style.bg == color::transparent ? style.fg : style.bg);
+		tft->setTextSize(this->style.size);
+		tft->setTextColor(
+			this->style.fg,
+			this->style.bg == color::transparent ? this->style.fg : this->style.bg
+		);
 
 		tft->print(text);
 
@@ -99,7 +88,6 @@ private:
 	}
 
 	Str text;
-	Style style;
 	geom::BoxRect box = {-1, -1};
 };
 

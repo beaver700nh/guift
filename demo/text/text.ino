@@ -24,7 +24,7 @@ void setup() {
 	tft.fillScreen(guift::color::black);
 
 	tft.render(
-		Text {"[THIS IS A TEST!!]____________\nhi", Text::Style {}
+		Text {"[THIS IS A TEST!!]____________\nhi", TextStyle {}
 			.setFg(guift::color::red)
 			.setBg(+guift::color::lightGray)}
 	);
@@ -32,13 +32,13 @@ void setup() {
 		Text {"test 2"}
 	);
 	tft.render(
-		Text {"test 3", Text::Style {}
+		Text {"test 3", TextStyle {}
 			.setFg(guift::color::green)
 			.setPosition({60, 40})
 			.setSize(3)}
 	);
 	tft.render(
-		Text {"test 4", Text::Style {}
+		Text {"test 4", TextStyle {}
 			.setSize(1)
 			.setBg(+guift::color::darkGray)}
 	);
