@@ -1,11 +1,11 @@
 CompileFlags:
   Add:
-    - "-DARDUINO=20000"
+    - "-DARDUINO=10607"
     - "-DARDUINO_AVR_MEGA2560"
     - "-DARDUINO_ARCH_AVR"
     - "-D__AVR__"
     - "-D__AVR_ATmega2560__"
-    - "-DF_CPU=16000000"
+    - "-DF_CPU=16000000L"
     - "-I/home/minhle/.arduino15/packages/arduino/hardware/avr/1.8.8/variants/mega"
     - "-I/home/minhle/.arduino15/packages/arduino/hardware/avr/1.8.8/cores/arduino"
     - "-I/home/minhle/.arduino15/packages/arduino/hardware/avr/1.8.8/libraries/Wire/src"

@@ -1,8 +1,9 @@
 #include <Arduino.h>
 
-#include "src/Common.hpp"
 #include "src/Display.hpp"
 #include "src/Touchscreen.hpp"
+
+#include "src/ui/Text.hpp"
 
 guift::Display tft;
 guift::Touchscreen ts {
@@ -21,4 +22,5 @@ void setup() {
 }
 
 void loop() {
+	tft.render(guift::ui::Text {});
 }

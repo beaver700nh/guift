@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdint.h>
 
 #include <MCUFRIEND_kbv.h>
@@ -6,14 +8,14 @@ namespace guift {
 
 // RGB565 format
 namespace Color {
-	inline uint16_t from24Bit(uint32_t rgb) {
+	inline constexpr uint16_t from24Bit(uint32_t rgb) {
 		return 0
 			| ((rgb & 0x00F80000) >> 8)
 			| ((rgb & 0x0000FC00) >> 5)
 			| ((rgb & 0x000000F8) >> 3);
 	}
 
-	inline uint16_t from24Bit(uint8_t r, uint8_t g, uint8_t b) {
+	inline constexpr uint16_t from24Bit(uint8_t r, uint8_t g, uint8_t b) {
 		return 0
 			| ((r & 0xF8) << 8)
 			| ((g & 0xFC) << 3)
@@ -45,6 +47,8 @@ namespace Color {
 		purple      = TFT_PURPLE,
 		pink        = TFT_PINK,
 	};
+
+	inline constexpr int16_t transparent = -1;
 }
 
 }
