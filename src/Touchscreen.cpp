@@ -135,7 +135,39 @@ Touchscreen::Touch Touchscreen::getTouch() {
 			}
 
 			p.z = 0x79E0;
-			goto out;
+
+			auto edgeVector = calib.xMaxYMin - calib.xMinYMin;
+			auto diagVector = calib.xMinYMin - calib.center;
+			auto pointVector = geom::Point {p.x, p.y} - calib.center;
+
+			Serial.println(edgeVector);
+			Serial.println(diagVector);
+			Serial.println(pointVector);
+
+			double inverseT = 1.0
+				* (edgeVector.x * pointVector.y - edgeVector.y * pointVector.x)
+				/ (edgeVector.x * diagVector.y - edgeVector.y * diagVector.x);
+
+			auto hitPoint = pointVector.scaledBy(inverseT) + calib.center;
+			double edgeT = hitPoint.distanceTo(calib.xMinYMin) / edgeVector.length();
+
+			geom::Point center(pixelSize.x / 2, pixelSize.y / 2);
+			auto outVector = geom::Point {static_cast<int16_t>(pixelSize.x * edgeT), 0} - center;
+			auto result = center + outVector * inverseT;
+
+			Serial.println(String("inverseT: ") + inverseT + ", edgeT: " + edgeT);
+
+			p.x = result.x;
+			p.y = result.y;
+		}
+		else if (true
+			&& p.x > calib.xMinYMax.x + memo.slopes.xMinYMax * (p.y - calib.xMinYMax.y)
+			&& p.x < calib.xMaxYMax.x + memo.slopes.xMaxYMax * (p.y - calib.xMaxYMax.y)
+		) {
+			p.z = TFT_CYAN;
+		}
+		else if (p.x < calib.center.x) {
+			p.z = 0x7800;
 		}
 		else {
 			uint16_t leftBound = calib.xMinYMax.x + memo.slopes.xMinYMax * ((float) p.y - calib.xMinYMax.y);
@@ -152,8 +184,11 @@ Touchscreen::Touch Touchscreen::getTouch() {
 				goto out;
 			}
 
-			p.z = TFT_CYAN;
-			goto out;
+			geom::Point edgePoint(pixelSize.x - 1, pixelSize.y - rayPoint.distanceTo(calib.xMaxYMin) * scaleFactor - 1);
+			auto result = memo.free.trueCenter + (edgePoint - memo.free.trueCenter) / rayT;
+
+			p.x = result.x;
+			p.y = result.y;
 		}
 
 	out:
