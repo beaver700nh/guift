@@ -1,5 +1,7 @@
 #pragma once
 
+// #define UI_DEBUG
+
 namespace guift {
 
 class Display;

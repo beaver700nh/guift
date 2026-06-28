@@ -25,6 +25,10 @@ struct CartesianVec2d {
 		return !(*this == other);
 	}
 
+	inline bool isPositive() const {
+		return x >= 0 && y >= 0;
+	}
+
 	inline double length() const {
 		return sqrt(0.0 + x * x + y * y);
 	}

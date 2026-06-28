@@ -40,6 +40,7 @@ namespace color {
 		maroon      = TFT_MAROON,
 		orange      = TFT_ORANGE,
 		greenYellow = TFT_GREENYELLOW,
+		yellowGreen = greenYellow,
 		olive       = TFT_OLIVE,
 		darkGreen   = TFT_DARKGREEN,
 		darkCyan    = TFT_DARKCYAN,

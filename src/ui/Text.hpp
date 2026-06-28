@@ -9,7 +9,7 @@ namespace guift {
 
 namespace ui {
 
-template<typename String>
+template<typename Str>
 class MutableText: public _BaseElement {
 public:
 	struct Style {
@@ -45,17 +45,17 @@ public:
 		}
 	};
 
-	inline MutableText(String text):
+	inline MutableText(Str text):
 		MutableText {text, {}} {};
-	inline MutableText(String text, const Style &style):
+	inline MutableText(Str text, const Style &style):
 		text {text},
 		style {style} {};
 
-	inline String getText() const {
+	inline Str getText() const {
 		return text;
 	}
 
-	inline MutableText &setText(String text) {
+	inline MutableText &setText(Str text) {
 		this->text = text;
 		return *this;
 	}
@@ -71,19 +71,36 @@ public:
 
 private:
 	inline void renderTo(Display *tft) const {
-		if (style.position.x >= 0 && style.position.y >= 0) {
+		auto isStatic = style.position.isPositive();
+		geom::Point position;
+
+		if (isStatic) {
 			tft->setCursor(style.position.x, style.position.y);
+			position = style.position;
+		}
+		else {
+			position = geom::Point {tft->getCursorX(), tft->getCursorY()};
 		}
 
 		tft->setTextSize(style.size);
 		tft->setTextColor(style.fg, style.bg == color::transparent ? style.fg : style.bg);
 
 		tft->print(text);
+
+		tft->getTextBounds(
+			text, position.x, position.y,
+			&box.origin.x, &box.origin.y,
+			&box.size.x, &box.size.y
+		);
+
+#ifdef UI_DEBUG
+		tft->drawRect(box.origin.x, box.origin.y, box.size.x, box.size.y, color::yellowGreen);
+#endif
 	}
 
-	String text;
+	Str text;
 	Style style;
-	// geom::BoxRect boundingBox;
+	geom::BoxRect box = {-1, -1};
 };
 
 using Text = MutableText<const char *>;
