@@ -21,8 +21,14 @@ monitor:
 	arduino-cli monitor --fqbn $(BOARD) --port $(PORT) --config baudrate=115200
 
 .PHONY: demo
+.ONESHELL: demo
 demo:
-	pushd demo/$(NAME) && arduino-cli compile --fqbn $(BOARD) && arduino-cli upload --fqbn $(BOARD) --port $(PORT) && popd
+	pushd demo/$(NAME)
+	arduino-cli compile --fqbn $(BOARD)
+	if [ $$? -ne 0 ];	then printf "\x1b[1;31mCouldn't run demo '$(NAME)' (build failed).\x1b[0m\n";	exit 1;	fi
+	$(call WaitPlugIn)
+	arduino-cli upload --fqbn $(BOARD) --port $(PORT)
+	popd
 
 define WaitPlugIn
 	while [ ! -e $(PORT) ]; do printf .; sleep 2; done

@@ -1,6 +1,8 @@
 #include <Arduino.h>
 
-#include "MCUFRIEND_kbv.h"
+#include <Adafruit_GFX.h>
+#include <MCUFRIEND_kbv.h>
+
 #include "Geometry.hpp"
 #include "TouchScreen.h"
 #include "Touchscreen.hpp"
@@ -14,8 +16,8 @@ Touchscreen::Touchscreen(uint8_t xp, uint8_t xm, uint8_t yp, uint8_t ym, uint16_
 	tft {tft} {}
 
 void Touchscreen::begin(QuadrilateralMode mode) {
-	auto w = tft->width();  if (w < 0) w = 0;
-	auto h = tft->height(); if (h < 0) h = 0;
+	auto w = tft->*_steal(_Backdoor_WIDTH {});
+	auto h = tft->*_steal(_Backdoor_HEIGHT {});
 
 	pixelSize = {
 		static_cast<uint16_t>(w),
@@ -104,7 +106,7 @@ Touchscreen::Touch Touchscreen::getTouch() {
 
 	switch (mode) {
 	case QuadrilateralMode::RECTANGULAR:
-		p.x = map(p.x, memo.minRect.a.x, memo.minRect.b.x, 0, pixelSize.x - 1);
+		p.x = map(p.x, memo.minRect.a.x, memo.minRect.b.x, 0, pixelSize.x - 1); // here issue
 		p.y = map(p.y, memo.minRect.a.y, memo.minRect.b.y, pixelSize.y - 1, 0);
 		break;
 
@@ -212,11 +214,10 @@ Touchscreen::Calibration Touchscreen::runCalibration(uint8_t xp, uint8_t xm, uin
 	Touchscreen ts {xp, xm, yp, ym, rx, {}, tft};
 	Calibration calib;
 
+	tft->setRotation(0);
+
 	auto w = tft->width();
 	auto h = tft->height();
-
-	tft->setRotation(0);
-	tft->fillScreen(TFT_BLACK);
 
 	tft->fillCircle(0, h - 1, 5, TFT_CYAN);
 	TSPoint xMinYMin = ts.waitRawTouch();
@@ -246,6 +247,8 @@ Touchscreen::Calibration Touchscreen::runCalibration(uint8_t xp, uint8_t xm, uin
 	TSPoint center = ts.waitRawTouch();
 	calib.center = {center.x, center.y};
 	tft->fillCircle(w/2, h/2, 3, 0x0000);
+	delay(1000);
+
 	return calib;
 }
 
