@@ -44,6 +44,10 @@ public:
 		inline bool isValid() const {
 			return isValid(*this);
 		}
+
+		operator geom::Point() const {
+			return {x, y};
+		}
 	};
 
 	enum class QuadrilateralMode {
@@ -88,7 +92,7 @@ private:
 			struct {
 				geom::CartesianVec2d<double> xMin, xMax, yMin, yMax;
 			} edges;
-		} ;
+		};
 	} memo;
 
 	void memoizeCalculationHelpers();

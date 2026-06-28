@@ -27,22 +27,30 @@ void setup() {
 void loop() {
 	using namespace guift::ui;
 
+	static unsigned long last = 0;
 	static bool flag = false;
 	static Box box {BoxStyle {}
 		.setFill(+guift::color::red)
+		.setBorder(guift::color::transparent)
 		.setSize({80, 80})
 		.setThickness(5)
 		.setRoundness(15)};
 
-	if (flag) {
-		box.getStyle().setBorder(+guift::color::yellowGreen);
-	} else {
-		box.getStyle().setBorder(guift::color::transparent);
+	auto now = millis();
+	if (now - last >= 2000) {
+		last = now;
+		if (flag) {
+			box.getStyle().setBorder(+guift::color::yellowGreen);
+		} else {
+			box.getStyle().setBorder(guift::color::transparent);
+		}
+		flag = !flag;
 	}
 
-	flag = !flag;
-	tft.render(box);
+	auto touch = ts.getTouch();
+	if (touch.isValid()) {
+		box.getStyle().setPosition(touch);
+	}
 
-	delay(200);
-	while (!ts.isTouching());
+	tft.render(box);
 }
