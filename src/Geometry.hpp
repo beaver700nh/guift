@@ -95,5 +95,4 @@ struct BoxRect {
 	}
 };
 
-}
-}
+}}

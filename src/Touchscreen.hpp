@@ -37,8 +37,12 @@ public:
 		inline Touch(const TSPoint &point): TSPoint {point.x, point.y, point.z} {}
 
 		static inline bool isValid(const TSPoint &point) {
-			// Pressure might not be supported past a binary extent
+			// Note: pressure might not be supported past a binary extent
 			return point.z > 0;
+		}
+
+		inline bool isValid() const {
+			return isValid(*this);
 		}
 	};
 

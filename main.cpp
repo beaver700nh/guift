@@ -2,7 +2,9 @@
 
 #include <MCUFRIEND_kbv.h>
 
+#include "HardwareSerial.h"
 #include "src/Touchscreen.hpp"
+#include "src/Common.hpp"
 
 MCUFRIEND_kbv tft;
 guift::Touchscreen ts {
@@ -15,9 +17,10 @@ guift::Touchscreen ts {
 	&tft};
 
 void setup() {
+	Serial.begin(115200);
 	tft.begin(0x9486);
+	ts.begin(guift::Touchscreen::QuadrilateralMode::FREE);
 }
 
 void loop() {
-	tft.fillScreen(TFT_MAGENTA);
 }
