@@ -4,7 +4,6 @@
 
 #include <MCUFRIEND_kbv.h>
 
-#include "HardwareSerial.h"
 #include "src/Touchscreen.hpp"
 #include "src/Common.hpp"
 

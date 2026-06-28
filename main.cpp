@@ -1,12 +1,10 @@
 #include <Arduino.h>
 
-#include <MCUFRIEND_kbv.h>
-
-#include "HardwareSerial.h"
-#include "src/Touchscreen.hpp"
 #include "src/Common.hpp"
+#include "src/Display.hpp"
+#include "src/Touchscreen.hpp"
 
-MCUFRIEND_kbv tft;
+guift::Display tft;
 guift::Touchscreen ts {
 	8, A2, A3, 9, 300,
 	{	{146, 89},
