@@ -24,11 +24,31 @@ namespace color {
 
 	enum OpaqueColor: uint16_t {
 		black       = TFT_BLACK,
-		darkGrey    = TFT_DARKGREY,
-		darkGray    = darkGrey,
-		lightGrey   = TFT_LIGHTGREY,
-		lightGray   = lightGrey,
+		grey1       = 0x0861,        // 0000'1 000'011 0'0001
+		gray1       = grey1,
+		grey2       = 0x18E3,        // 0001'1 000'111 0'0011
+		gray2       = grey2,
+		grey3       = 0x2965,        // 0010'1 001'011 0'0101
+		gray3       = grey3,
+		grey4       = 0x4248,        // 0100'0 010'010 0'1000
+		gray4       = grey4,
+		grey5       = 0x5AEB,        // 0101'1 010'111 0'1011
+		gray5       = grey5,
+		grey6       = TFT_DARKGREY,  // 0111'1 011'111 0'1111
+		gray6       = grey6,
+		grey7       = TFT_LIGHTGREY, // 1100'0 110'000 1'1000
+		gray7       = grey7,
+		grey8       = 0xEF9D,        // 1110'1 111'100 1'1101
+		gray8       = grey8,
+		grey9       = 0xF7DE,        // 1111'0 111'110 1'1110
+		gray9       = grey9,
 		white       = TFT_WHITE,
+
+		// backwards-compatibility
+		darkGrey    = grey6,
+		darkGray    = darkGrey,
+		lightGrey   = grey7,
+		lightGray   = lightGrey,
 
 		red         = TFT_RED,
 		green       = TFT_GREEN,
