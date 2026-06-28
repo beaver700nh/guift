@@ -11,7 +11,7 @@ all: build monitor
 build: compile upload
 
 compile:
-	arduino-cli compile --fqbn $(BOARD) --verbose $(DIR)
+	arduino-cli compile --fqbn $(BOARD) --build-property build.extra_flags="-std=gnu++17" --verbose $(DIR)
 
 upload:
 	@$(call WaitPlugIn)

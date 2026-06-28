@@ -7,7 +7,7 @@
 namespace guift {
 
 // RGB565 format
-namespace Color {
+namespace color {
 	inline constexpr uint16_t from24Bit(uint32_t rgb) {
 		return 0
 			| ((rgb & 0x00F80000) >> 8)
@@ -22,7 +22,7 @@ namespace Color {
 			| (b >> 3);
 	}
 
-	enum: uint16_t {
+	enum OpaqueColor: uint16_t {
 		black       = TFT_BLACK,
 		darkGrey    = TFT_DARKGREY,
 		darkGray    = darkGrey,
@@ -48,7 +48,13 @@ namespace Color {
 		pink        = TFT_PINK,
 	};
 
-	inline constexpr int16_t transparent = -1;
+	enum Color: int32_t {
+		transparent = -1,
+	};
+
+	inline Color operator+(OpaqueColor color) {
+		return static_cast<Color>(color);
+	}
 }
 
 }

@@ -220,31 +220,31 @@ Touchscreen::Calibration Touchscreen::runCalibration(uint8_t xp, uint8_t xm, uin
 	auto w = tft->width();
 	auto h = tft->height();
 
-	tft->fillCircle(0, h - 1, 5, Color::green);
+	tft->fillCircle(0, h - 1, 5, color::green);
 	TSPoint xMinYMin = ts.waitRawTouch();
 	calib.xMinYMin = {xMinYMin.x, xMinYMin.y};
 	tft->fillCircle(0, h - 1, 5, 0x0000);
 	delay(1000);
 
-	tft->fillCircle(w - 1, h - 1, 5, Color::green);
+	tft->fillCircle(w - 1, h - 1, 5, color::green);
 	TSPoint xMaxYMin = ts.waitRawTouch();
 	calib.xMaxYMin = {xMaxYMin.x, xMaxYMin.y};
 	tft->fillCircle(w - 1, h - 1, 5, 0x0000);
 	delay(1000);
 
-	tft->fillCircle(0, 0, 5, Color::green);
+	tft->fillCircle(0, 0, 5, color::green);
 	TSPoint xMinYMax = ts.waitRawTouch();
 	calib.xMinYMax = {xMinYMax.x, xMinYMax.y};
 	tft->fillCircle(0, 0, 5, 0x0000);
 	delay(1000);
 
-	tft->fillCircle(w - 1, 0, 5, Color::green);
+	tft->fillCircle(w - 1, 0, 5, color::green);
 	TSPoint xMaxYMax = ts.waitRawTouch();
 	calib.xMaxYMax = {xMaxYMax.x, xMaxYMax.y};
 	tft->fillCircle(w - 1, 0, 5, 0x0000);
 	delay(1000);
 
-	tft->fillCircle(w/2, h/2, 3, Color::green);
+	tft->fillCircle(w/2, h/2, 3, color::green);
 	TSPoint center = ts.waitRawTouch();
 	calib.center = {center.x, center.y};
 	tft->fillCircle(w/2, h/2, 3, 0x0000);

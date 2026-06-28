@@ -1,5 +1,6 @@
 CompileFlags:
   Add:
+    - "-std=gnu++17"
     - "-DARDUINO=10607"
     - "-DARDUINO_AVR_MEGA2560"
     - "-DARDUINO_ARCH_AVR"

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#include "src/Common.hpp"
 #include "src/Display.hpp"
 #include "src/Touchscreen.hpp"
 
@@ -19,8 +20,18 @@ void setup() {
 	Serial.begin(115200);
 	tft.begin(0x9486);
 	ts.begin(guift::Touchscreen::QuadrilateralMode::FREE);
+
+	using namespace guift::ui;
+
+	tft.fillScreen(guift::color::black);
+	tft.render(Text {"[This is a TEST!!!]", Text::Style {}.setFg(guift::color::red)});
+	tft.render(Text {"test 2"});
+	tft.render(Text {"test 3", Text::Style {}.setPosition({100, 100}).setSize(3)});
+	tft.render(Text {"test 4", Text::Style {}
+		.setSize(1)
+		.setBg(+guift::color::darkGray)});
 }
 
+
 void loop() {
-	tft.render(guift::ui::Text {});
 }
