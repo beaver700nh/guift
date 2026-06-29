@@ -30,17 +30,16 @@ void loop() {
 	static unsigned long last = 0;
 	static bool flag = false;
 	static Box box {BoxStyle {}
-		.setFill(+guift::color::red)
-		.setBorder(guift::color::transparent)
-		.setSize({80, 80})
-		.setThickness(5)
-		.setRoundness(15)};
+		.setSize({40, 200})
+		.setThickness(4)
+		.setRoundness(100)};
+	static auto color = box.getStyle().border;
 
 	auto now = millis();
 	if (now - last >= 2000) {
 		last = now;
 		if (flag) {
-			box.getStyle().setBorder(+guift::color::yellowGreen);
+			box.getStyle().setBorder(color);
 		} else {
 			box.getStyle().setBorder(guift::color::transparent);
 		}
