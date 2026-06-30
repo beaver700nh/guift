@@ -17,11 +17,11 @@ struct CartesianVec2d {
 		};
 	}
 
-	inline bool operator==(const CartesianVec2d<T> &other) const {
+	inline bool operator ==(const CartesianVec2d<T> &other) const {
 		return x == other.x && y == other.y;
 	}
 
-	inline bool operator!=(const CartesianVec2d<T> &other) const {
+	inline bool operator !=(const CartesianVec2d<T> &other) const {
 		return !(*this == other);
 	}
 
@@ -43,21 +43,21 @@ struct CartesianVec2d {
 
 	// Assumes calculation will not overflow
 	template<typename U>
-	inline CartesianVec2d<T> operator+(const CartesianVec2d<U> &other) const {
+	inline CartesianVec2d<T> operator +(const CartesianVec2d<U> &other) const {
 		return {static_cast<T>(x + other.x), static_cast<T>(y + other.y)};
 	}
 
 	// Assumes calculation will not overflow
 	template<typename U>
-	inline CartesianVec2d<T> operator-(const CartesianVec2d<U> &other) const {
+	inline CartesianVec2d<T> operator -(const CartesianVec2d<U> &other) const {
 		return {static_cast<T>(x - other.x), static_cast<T>(y - other.y)};
 	}
 
-	inline CartesianVec2d<T> operator*(double scalar) const {
+	inline CartesianVec2d<T> operator *(double scalar) const {
 		return {x * scalar, y * scalar};
 	}
 
-	inline CartesianVec2d<T> operator/(double scalar) const {
+	inline CartesianVec2d<T> operator /(double scalar) const {
 		return *this * (1.0 / scalar);
 	}
 

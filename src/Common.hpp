@@ -73,7 +73,7 @@ namespace color {
 		transparent = -1,
 	};
 
-	inline Color operator+(OpaqueColor color) {
+	inline Color operator +(OpaqueColor color) {
 		return static_cast<Color>(color);
 	}
 }

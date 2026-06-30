@@ -4,6 +4,7 @@
 #include "src/Display.hpp"
 #include "src/Touchscreen.hpp"
 
+#include "src/ui/Text.hpp"
 #include "src/ui/Box.hpp"
 
 guift::Display tft;
@@ -20,6 +21,8 @@ void setup() {
 	Serial.begin(115200);
 	tft.begin(0x9486);
 	ts.begin(guift::Touchscreen::QuadrilateralMode::FREE);
+
+	using namespace guift::ui;
 
 	tft.fillScreen(guift::color::black);
 }
