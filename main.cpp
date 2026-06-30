@@ -43,6 +43,22 @@ void setup() {
 				.setUnderline(+guift::color::gray2)}
 		}
 	);
+
+	tft.render(
+		Button {ButtonStyle {}
+			.useTextOffset({15, 10}),
+
+			Box {BoxStyle {}
+				.setSize({200, 50})
+				.setPosition({100, 100})
+				.setRoundness(1000)
+				.setThickness(5)},
+			Text {"I'm another button!", TextStyle {}
+				.setSize(1)
+				.setFg(guift::color::magenta)
+				.setStrike(+guift::color::yellow)}
+		}
+	);
 }
 
 void loop() {

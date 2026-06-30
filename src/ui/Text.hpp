@@ -89,8 +89,7 @@ private:
 		geom::Point position;
 
 		if (isStatic) {
-			tft->setCursor(style.position.x, style.position.y);
-			position = style.position;
+			tft->setCursor(position = style.position);
 		}
 		else {
 			position = geom::Point {tft->getCursorX(), tft->getCursorY()};

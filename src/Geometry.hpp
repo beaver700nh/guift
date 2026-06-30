@@ -2,6 +2,8 @@
 
 #include <WString.h>
 
+#define geom_xy(vec2d) (vec2d).x, (vec2d).y
+
 namespace guift {
 namespace geom {
 

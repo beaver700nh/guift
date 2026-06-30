@@ -13,12 +13,18 @@ namespace ui {
 struct ButtonStyle {
 	bool packed;
 
-	enum class TextAlignment {
+	enum class TextAlignment1d {
 		none,
-		left,
+		start,
 		center,
-		right,
+		end,
+		left = start,
+		right = end,
+		top = start,
+		bottom = end,
 	};
+
+	using TextAlignment = geom::CartesianVec2d<TextAlignment1d>;
 
 	union {
 		struct {
@@ -40,7 +46,7 @@ struct ButtonStyle {
 	}
 
 	inline auto &setTextOffset(geom::Point textOffset) {
-		this->alignment = TextAlignment::none;
+		this->alignment = TextAlignment::from(TextAlignment1d::none);
 		this->textOffset = textOffset;
 		return *this;
 	}
@@ -91,14 +97,29 @@ private:
 	inline void calculateTextOffset(Display *tft) {
 		if (style.packed) {
 			// Render off-screen to get bounding box
-			tft->setCursor(tft->width(), tft->height());
+			tft->setCursor(tft->getDimensions());
 			text.renderTo(tft);
 
 			box.getStyle()
 				.setSize(text.box.size + style.padding * 2);
+
+			return;
 		}
-		else {
-			// TODO
+
+		// TODO refactor to allow packing both axes separately
+		switch (style.alignment.x) {
+		case ButtonStyle::TextAlignment1d::start:
+			style.textOffset.x = 0;
+			break;
+		case ButtonStyle::TextAlignment1d::center:
+			style.textOffset.x = (box.getStyle().size.x - text.box.size.x) / 2;
+			break;
+		case ButtonStyle::TextAlignment1d::end:
+			style.textOffset.x = box.getStyle().size.x - text.box.size.x;
+			break;
+		default:
+			// Ignore
+			break;
 		}
 	}
 
@@ -111,11 +132,10 @@ private:
 		box.renderTo(tft);
 
 		if (style.packed) {
-			auto textPosition = box.getStyle().position + style.padding;
-			tft->setCursor(textPosition.x, textPosition.y);
+			tft->setCursor(box.getStyle().position + style.padding);
 		}
 		else {
-			// TODO
+			tft->setCursor(box.getStyle().position + style.textOffset);
 		}
 
 		text.renderTo(tft);

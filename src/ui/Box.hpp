@@ -14,8 +14,8 @@ struct BoxStyle {
 	geom::Size size;
 	color::Color fill;
 	color::Color border;
-	uint8_t thickness;
-	uint8_t roundness;
+	uint16_t thickness;
+	uint16_t roundness;
 
 	struct {
 		uint8_t maxBorder;
@@ -57,7 +57,7 @@ struct BoxStyle {
 		return *this;
 	}
 
-	inline auto &setThickness(uint8_t thickness) {
+	inline auto &setThickness(uint16_t thickness) {
 		thickness = constrain(thickness, 1, memo.maxBorder);
 
 		this->thickness = thickness;
@@ -67,7 +67,7 @@ struct BoxStyle {
 		return *this;
 	}
 
-	inline auto &setRoundness(uint8_t roundness) {
+	inline auto &setRoundness(uint16_t roundness) {
 		roundness = constrain(roundness, 0, memo.maxBorder);
 
 		this->roundness = roundness;

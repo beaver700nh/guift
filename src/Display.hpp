@@ -2,6 +2,9 @@
 
 #include <MCUFRIEND_kbv.h>
 
+#include "Adafruit_GFX.h"
+#include "Geometry.hpp"
+
 template<typename Tag, typename Tag::type member>
 struct _AccessHack {
 	friend typename Tag::type _steal(Tag) {
@@ -40,8 +43,32 @@ public:
 
 	// Caller is responsible for memory management!
 	template<typename Style>
-	void render(const ui::_BaseElement<Style> *element) {
+	inline void render(const ui::_BaseElement<Style> *element) {
 		element->renderTo(this);
+	}
+
+	// TODO wrap more x,y pairs
+
+	inline geom::Size getDimensions() {
+		return {
+			static_cast<uint16_t>(width()),
+			static_cast<uint16_t>(height()),
+		};
+	}
+
+	inline geom::Size getBaseDimensions() {
+		return {
+			static_cast<uint16_t>(this->*_steal(_Backdoor_WIDTH {})),
+			static_cast<uint16_t>(this->*_steal(_Backdoor_HEIGHT {})),
+		};
+	}
+
+	inline void setCursor(geom::Point position) {
+		Adafruit_GFX::setCursor(geom_xy(position));
+	}
+
+	inline void setCursor(geom::Size position) {
+		Adafruit_GFX::setCursor(geom_xy(position));
 	}
 };
 
