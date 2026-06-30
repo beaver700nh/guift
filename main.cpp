@@ -6,6 +6,7 @@
 
 #include "src/ui/Text.hpp"
 #include "src/ui/Box.hpp"
+#include "src/ui/Button.hpp"
 
 guift::Display tft;
 guift::Touchscreen ts {
@@ -25,6 +26,23 @@ void setup() {
 	using namespace guift::ui;
 
 	tft.fillScreen(guift::color::black);
+
+	tft.render(
+		Button {ButtonStyle {}
+			.usePackedText({10, 6}),
+
+			Box {BoxStyle {}
+				.setPosition({100, 50})
+				.setFill(+guift::color::white)
+				.setBorder(+guift::color::gray5)
+				.setRoundness(12)
+				// .setRoundness(1000) // TODO fix clamping being applied before size is set by button
+				.setThickness(2)},
+			Text {"I'm a button!", TextStyle {}
+				.setFg(guift::color::black)
+				.setUnderline(+guift::color::gray2)}
+		}
+	);
 }
 
 void loop() {

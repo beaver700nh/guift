@@ -5,6 +5,7 @@
 
 #include "Common.hpp"
 #include "Geometry.hpp"
+#include "Display.hpp"
 #include "TouchScreen.h"
 #include "Touchscreen.hpp"
 

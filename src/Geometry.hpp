@@ -17,6 +17,11 @@ struct CartesianVec2d {
 		};
 	}
 
+	template<typename U>
+	static inline CartesianVec2d<T> from(U xy) {
+		return from(xy, xy);
+	}
+
 	inline bool operator ==(const CartesianVec2d<T> &other) const {
 		return x == other.x && y == other.y;
 	}

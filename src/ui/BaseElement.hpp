@@ -27,7 +27,7 @@ protected:
 
 private:
 	friend class guift::Display;
-	virtual void renderTo(Display *tft) const = 0;
+	virtual void renderTo(Display *tft) = 0;
 };
 
 }}

@@ -5,23 +5,6 @@
 
 #include "Geometry.hpp"
 
-template<typename Tag, typename Tag::type member>
-struct _AccessHack {
-	friend typename Tag::type _steal(Tag) {
-		return member;
-	}
-};
-
-#define _AddBackdoor(Class, Type, Victim, property) \
-	struct _Backdoor_##property { \
-		typedef Type Class::*type; \
-		friend type _steal(_Backdoor_##property); \
-	}; \
-	template struct _AccessHack<_Backdoor_##property, &Victim::property>;
-
-_AddBackdoor(Adafruit_GFX, int16_t, MCUFRIEND_kbv, WIDTH)
-_AddBackdoor(Adafruit_GFX, int16_t, MCUFRIEND_kbv, HEIGHT)
-
 namespace guift {
 
 class Touchscreen: private TouchScreen {

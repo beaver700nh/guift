@@ -62,6 +62,8 @@ struct TextStyle {
 	}
 };
 
+class Button;
+
 template<typename Str>
 class MutableText: public _BaseElement<TextStyle> {
 public:
@@ -82,7 +84,7 @@ public:
 	}
 
 private:
-	inline void renderTo(Display *tft) const {
+	inline void renderTo(Display *tft) override {
 		auto isStatic = style.position.isPositive();
 		geom::Point position;
 
@@ -140,6 +142,8 @@ private:
 
 	Str text;
 	geom::BoxRect box = {{-1, -1}};
+
+	friend class Button;
 };
 
 using Text = MutableText<const char *>;

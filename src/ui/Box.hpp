@@ -89,21 +89,23 @@ struct BoxStyle {
 
 private:
 	inline void _updateThickPosition() {
-		memo.thickPosition = position + geom::Point {thickness, thickness};
+		memo.thickPosition = position + geom::Point::from(thickness);
 	}
 	inline void _updateThickSize() {
-		memo.thickSize = size - geom::Size {thickness, thickness} * 2;
+		memo.thickSize = size - geom::Size::from(thickness) * 2;
 	}
 	inline void _updateRoundPosition() {
-		memo.roundPosition = position + geom::Point {roundness, roundness};
+		memo.roundPosition = position + geom::Point::from(roundness);
 	}
 	inline void _updateRoundSize() {
-		memo.roundSize = size - geom::Size {roundness, roundness} * 2;
+		memo.roundSize = size - geom::Size::from(roundness) * 2;
 	}
 	inline void _updateRoundPosition2() {
 		memo.roundPosition2 = memo.roundPosition + memo.roundSize;
 	}
 };
+
+class Button;
 
 class Box: public _BaseElement<BoxStyle> {
 public:
@@ -114,7 +116,7 @@ public:
 		_BaseElement {style} {};
 
 private:
-	inline void renderTo(Display *tft) const {
+	inline void renderTo(Display *tft) override {
 		tft->startWrite();
 
 		if (style.fill != color::transparent) {
@@ -168,6 +170,8 @@ private:
 
 		tft->endWrite();
 	}
+
+	friend class Button;
 };
 
 }}
