@@ -19,7 +19,7 @@ struct TextStyle {
 
 	struct {
 		uint8_t decorThickness = 0;
-	} memo;
+	} _memo;
 
 	inline auto &setPosition(geom::Point position) {
 		this->position = position;
@@ -28,7 +28,7 @@ struct TextStyle {
 
 	inline auto &setSize(uint8_t size) {
 		this->size = size;
-		memo.decorThickness = (size + 1) / 2;
+		_memo.decorThickness = (size + 1) / 2;
 		return *this;
 	}
 
@@ -134,14 +134,14 @@ private:
 
 		if (style.underline != color::transparent) {
 			tft->writeFillRect(
-				box.origin.x, box.origin.y + box.size.y - style.memo.decorThickness,
-				box.size.x, style.memo.decorThickness, style.underline);
+				box.origin.x, box.origin.y + box.size.y - style._memo.decorThickness,
+				box.size.x, style._memo.decorThickness, style.underline);
 		}
 
 		if (style.strike != color::transparent) {
 			tft->writeFillRect(
-				box.origin.x, box.origin.y + (box.size.y >> 1) - style.memo.decorThickness,
-				box.size.x, style.memo.decorThickness, style.strike);
+				box.origin.x, box.origin.y + (box.size.y >> 1) - style._memo.decorThickness,
+				box.size.x, style._memo.decorThickness, style.strike);
 		}
 
 		tft->endWrite();

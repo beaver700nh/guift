@@ -1,3 +1,7 @@
+/*
+ * DEMO: Runs the canned caliration routine and prints the results to the screen.
+ */
+
 #include <Arduino.h>
 
 #include <MCUFRIEND_kbv.h>

@@ -24,7 +24,7 @@ struct BoxStyle {
 		geom::Point roundPosition;
 		geom::Point roundPosition2; // opposite corner
 		geom::Size roundSize;
-	} memo;
+	} _memo;
 
 	inline auto &setPosition(geom::Point position) {
 		this->position = position;
@@ -35,14 +35,34 @@ struct BoxStyle {
 		return *this;
 	}
 
-	inline auto &setSize(geom::Size size) {
-		// must leave 1-2px that is not the border
-		memo.maxBorder = (1 + min(size.x, size.y)) / 2 - 1;
+	inline auto &setThickness(uint16_t thickness) {
+		thickness = constrain(thickness, 1, _memo.maxBorder);
 
-		this->size = size;
+		this->thickness = thickness;
+		_updateThickPosition();
 		_updateThickSize();
+
+		return *this;
+	}
+
+	inline auto &setRoundness(uint16_t roundness) {
+		roundness = constrain(roundness, 0, _memo.maxBorder);
+
+		this->roundness = roundness;
+		_updateRoundPosition();
 		_updateRoundSize();
 		_updateRoundPosition2();
+
+		return *this;
+	}
+
+	inline auto &setSize(geom::Size size) {
+		// must leave 1-2px that is not the border
+		_memo.maxBorder = (1 + min(size.x, size.y)) / 2 - 1;
+
+		this->size = size;
+		setThickness(thickness);
+		setRoundness(roundness);
 
 		return *this;
 	}
@@ -57,27 +77,6 @@ struct BoxStyle {
 		return *this;
 	}
 
-	inline auto &setThickness(uint16_t thickness) {
-		thickness = constrain(thickness, 1, memo.maxBorder);
-
-		this->thickness = thickness;
-		_updateThickPosition();
-		_updateThickSize();
-
-		return *this;
-	}
-
-	inline auto &setRoundness(uint16_t roundness) {
-		roundness = constrain(roundness, 0, memo.maxBorder);
-
-		this->roundness = roundness;
-		_updateRoundPosition();
-		_updateRoundSize();
-		_updateRoundPosition2();
-
-		return *this;
-	}
-
 	inline BoxStyle() {
 		setPosition({0, 0});
 		setSize({100, 100});
@@ -89,19 +88,19 @@ struct BoxStyle {
 
 private:
 	inline void _updateThickPosition() {
-		memo.thickPosition = position + geom::Point::from(thickness);
+		_memo.thickPosition = position + geom::Point::from(thickness);
 	}
 	inline void _updateThickSize() {
-		memo.thickSize = size - geom::Size::from(thickness) * 2;
+		_memo.thickSize = size - geom::Size::from(thickness) * 2;
 	}
 	inline void _updateRoundPosition() {
-		memo.roundPosition = position + geom::Point::from(roundness);
+		_memo.roundPosition = position + geom::Point::from(roundness);
 	}
 	inline void _updateRoundSize() {
-		memo.roundSize = size - geom::Size::from(roundness) * 2;
+		_memo.roundSize = size - geom::Size::from(roundness) * 2;
 	}
 	inline void _updateRoundPosition2() {
-		memo.roundPosition2 = memo.roundPosition + memo.roundSize;
+		_memo.roundPosition2 = _memo.roundPosition + _memo.roundSize;
 	}
 };
 
@@ -121,50 +120,50 @@ private:
 
 		if (style.fill != color::transparent) {
 			tft->writeFillRect(
-				style.memo.roundPosition.x, style.position.y,
-				style.memo.roundSize.x, style.size.y, style.fill);
+				style._memo.roundPosition.x, style.position.y,
+				style._memo.roundSize.x, style.size.y, style.fill);
 			tft->fillCircleHelper(
-				style.memo.roundPosition.x,
-				style.memo.roundPosition.y, style.roundness, 0x2, style.memo.roundSize.y - 1, style.fill);
+				style._memo.roundPosition.x,
+				style._memo.roundPosition.y, style.roundness, 0x2, style._memo.roundSize.y - 1, style.fill);
 			tft->fillCircleHelper(
-				style.memo.roundPosition2.x - 1,
-				style.memo.roundPosition.y, style.roundness, 0x1, style.memo.roundSize.y - 1, style.fill);
+				style._memo.roundPosition2.x - 1,
+				style._memo.roundPosition.y, style.roundness, 0x1, style._memo.roundSize.y - 1, style.fill);
 		}
 
 		if (style.border != color::transparent && style.border != style.fill) {
 			for (uint8_t i = 0; i < style.thickness; ++i) {
 				tft->drawCircleHelper(
-					style.memo.roundPosition.x,
-					style.memo.roundPosition.y,
+					style._memo.roundPosition.x,
+					style._memo.roundPosition.y,
 					style.roundness - i, 0x1, style.border);
 				tft->writeFastHLine(
-					style.memo.roundPosition.x,
+					style._memo.roundPosition.x,
 					style.position.y + i,
-					style.memo.roundSize.x, style.border);
+					style._memo.roundSize.x, style.border);
 				tft->drawCircleHelper(
-					style.memo.roundPosition2.x - 1,
-					style.memo.roundPosition.y,
+					style._memo.roundPosition2.x - 1,
+					style._memo.roundPosition.y,
 					style.roundness - i, 0x2, style.border);
 				tft->writeFastVLine(
 					style.position.x + style.size.x - 1 - i,
-					style.memo.roundPosition.y,
-					style.memo.roundSize.y, style.border);
+					style._memo.roundPosition.y,
+					style._memo.roundSize.y, style.border);
 				tft->drawCircleHelper(
-					style.memo.roundPosition2.x - 1,
-					style.memo.roundPosition2.y - 1,
+					style._memo.roundPosition2.x - 1,
+					style._memo.roundPosition2.y - 1,
 					style.roundness - i, 0x4, style.border);
 				tft->writeFastHLine(
-					style.memo.roundPosition.x,
+					style._memo.roundPosition.x,
 					style.position.y + style.size.y - 1 - i,
-					style.memo.roundSize.x, style.border);
+					style._memo.roundSize.x, style.border);
 				tft->drawCircleHelper(
-					style.memo.roundPosition.x,
-					style.memo.roundPosition2.y - 1,
+					style._memo.roundPosition.x,
+					style._memo.roundPosition2.y - 1,
 					style.roundness - i, 0x8, style.border);
 				tft->writeFastVLine(
 					style.position.x + i,
-					style.memo.roundPosition.y,
-					style.memo.roundSize.y, style.border);
+					style._memo.roundPosition.y,
+					style._memo.roundSize.y, style.border);
 			}
 		}
 

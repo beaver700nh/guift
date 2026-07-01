@@ -35,7 +35,7 @@ void setup() {
 				.setFill(+guift::color::white)
 				.setBorder(+guift::color::gray5)
 				.setRoundness(12)
-				// .setRoundness(-1) // TODO fix clamping being applied before size is set by button
+				.setRoundness(-1)
 				.setThickness(2)},
 			Text {"I'm a button!", TextStyle {}
 				.setFg(guift::color::black)
@@ -54,7 +54,7 @@ void setup() {
 				.setThickness(1)},
 			Text {"I'm a button!", TextStyle {}
 				.setFg(guift::color::black)
-				.setUnderline(+guift::color::gray2)}}
+				.setUnderline(+guift::color::orange)}}
 	);
 
 	tft.render(
