@@ -73,6 +73,8 @@ public:
 			.setPosition({-1, -1}); // enables setCursor() positioning
 	};
 
+	using Align = ButtonStyle::TextAlignment1d;
+
 private:
 	Box &box;
 	Text &text;
@@ -80,8 +82,6 @@ private:
 	inline void calculateText(Display *tft) {
 		auto textBox = text.getBox(tft);
 		auto &boxStyle = box.getStyle();
-
-		using Align = ButtonStyle::TextAlignment1d;
 
 #define calculateAlignment(axis) \
 		switch (style.alignment.axis) { \
