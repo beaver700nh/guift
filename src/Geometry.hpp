@@ -2,7 +2,7 @@
 
 #include <WString.h>
 
-#define geom_xy(vec2d) (vec2d).x, (vec2d).y
+#define geom_xy(vec2d) vec2d.x, vec2d.y
 
 namespace guift {
 namespace geom {
@@ -51,13 +51,19 @@ struct CartesianVec2d {
 	// Assumes calculation will not overflow
 	template<typename U>
 	inline CartesianVec2d<T> operator +(const CartesianVec2d<U> &other) const {
-		return {static_cast<T>(x + other.x), static_cast<T>(y + other.y)};
+		return {
+			static_cast<T>(x + other.x),
+			static_cast<T>(y + other.y),
+		};
 	}
 
 	// Assumes calculation will not overflow
 	template<typename U>
 	inline CartesianVec2d<T> operator -(const CartesianVec2d<U> &other) const {
-		return {static_cast<T>(x - other.x), static_cast<T>(y - other.y)};
+		return {
+			static_cast<T>(x - other.x),
+			static_cast<T>(y - other.y),
+		};
 	}
 
 	inline CartesianVec2d<T> operator *(double scalar) const {

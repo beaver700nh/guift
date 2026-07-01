@@ -49,26 +49,32 @@ public:
 
 	// TODO wrap more x,y pairs
 
-	inline geom::Size getDimensions() {
+	inline geom::Size getDimensions() const {
 		return {
 			static_cast<uint16_t>(width()),
 			static_cast<uint16_t>(height()),
 		};
 	}
 
-	inline geom::Size getBaseDimensions() {
+	inline geom::Size getBaseDimensions() const {
 		return {
 			static_cast<uint16_t>(this->*_steal(_Backdoor_WIDTH {})),
 			static_cast<uint16_t>(this->*_steal(_Backdoor_HEIGHT {})),
 		};
 	}
 
+	using Adafruit_GFX::setCursor;
+
 	inline void setCursor(geom::Point position) {
-		Adafruit_GFX::setCursor(geom_xy(position));
+		setCursor(geom_xy(position));
 	}
 
 	inline void setCursor(geom::Size position) {
-		Adafruit_GFX::setCursor(geom_xy(position));
+		setCursor(geom_xy(position));
+	}
+
+	inline geom::Point getCursor() const {
+		return {getCursorX(), getCursorY()};
 	}
 };
 

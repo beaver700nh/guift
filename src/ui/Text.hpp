@@ -64,13 +64,14 @@ struct TextStyle {
 
 class Button;
 
+// Single-line text only!
 template<typename Str>
-class MutableText: public _BaseElement<TextStyle> {
+class GenericText: public _BaseElement<TextStyle> {
 public:
-	inline MutableText(Str text):
-		MutableText {text, {}} {};
+	inline GenericText(Str text):
+		GenericText {text, {}} {};
 
-	inline MutableText(Str text, const TextStyle &style):
+	inline GenericText(Str text, const TextStyle &style):
 		_BaseElement {style},
 		text {text} {};
 
@@ -78,36 +79,41 @@ public:
 		return text;
 	}
 
-	inline MutableText &setText(Str text) {
+	inline GenericText &setText(Str text) {
 		this->text = text;
 		return *this;
 	}
 
-private:
-	inline void renderTo(Display *tft) override {
-		auto isStatic = style.position.isPositive();
-		geom::Point position;
+	inline geom::Point getPosition(Display *tft) const {
+		return style.position.isPositive()
+			? style.position
+			: tft->getCursor();
+	}
 
-		if (isStatic) {
-			tft->setCursor(position = style.position);
-		}
-		else {
-			position = geom::Point {tft->getCursorX(), tft->getCursorY()};
-		}
+private:
+	inline void configureText(Display *tft) {
+		auto position = getPosition(tft);
+
+		if (position == style.position)
+			tft->setCursor(position);
 
 		tft->setTextSize(style.size);
 		tft->setTextColor(
 			style.fg,
-			style.bg == color::transparent ? style.fg : style.bg
+			(style.bg, style.fg)
 		);
-
-		tft->print(text);
 
 		tft->getTextBounds(
-			text, position.x, position.y,
-			&box.origin.x, &box.origin.y,
-			&box.size.x, &box.size.y
+			text,
+			geom_xy(position),
+			geom_xy(&box.origin),
+			geom_xy(&box.size)
 		);
+	}
+
+	inline void renderTo(Display *tft) override {
+		configureText(tft);
+		tft->print(text);
 
 		tft->startWrite();
 
@@ -137,14 +143,29 @@ private:
 				box.origin.x, box.origin.y + (box.size.y >> 1) - style.memo.decorThickness,
 				box.size.x, style.memo.decorThickness, style.strike);
 		}
+
+		tft->endWrite();
 	}
 
 	Str text;
 	geom::BoxRect box = {{-1, -1}};
 
 	friend class Button;
+
+public:
+	// Pass nullptr to skip recalculation
+	inline geom::BoxRect getBox(Display *tft) {
+		if (tft != nullptr) {
+			auto saved = style.position;
+			style.position = {0, tft->height()}; // render off-screen
+			configureText(tft);
+			style.position = saved;
+		}
+
+		return box;
+	}
 };
 
-using Text = MutableText<const char *>;
+using Text = GenericText<const char *>;
 
 }}

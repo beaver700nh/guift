@@ -28,8 +28,7 @@ void setup() {
 	tft.fillScreen(guift::color::black);
 
 	tft.render(
-		Button {ButtonStyle {}
-			.usePackedText({10, 6}),
+		Button {ButtonStyle {},
 
 			Box {BoxStyle {}
 				.setPosition({100, 50})
@@ -57,6 +56,17 @@ void setup() {
 				.setSize(1)
 				.setFg(guift::color::magenta)
 				.setStrike(+guift::color::yellow)}
+		}
+	);
+
+	tft.render(
+		Button {ButtonStyle {},
+
+			Box {BoxStyle {}
+				.setPosition({100, 170})},
+			Text {"Button #3\nsays hello!", TextStyle {}
+				.setSize(2)
+				.setFg(guift::color::cyan)}
 		}
 	);
 }

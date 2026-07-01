@@ -11,33 +11,22 @@ namespace guift {
 namespace ui {
 
 struct ButtonStyle {
-	bool packed;
-
 	enum class TextAlignment1d {
 		none,
-		start,
+		pack,
 		center,
-		end,
-		left = start,
-		right = end,
-		top = start,
-		bottom = end,
+		start, left = start, top = start,
+		end,   right = end,  bottom = end,
 	};
 
 	using TextAlignment = geom::CartesianVec2d<TextAlignment1d>;
 
-	union {
-		struct {
-			TextAlignment alignment;
-			geom::Point textOffset;
-		};
+	TextAlignment alignment;
+	geom::Point textOffset;
 
-		geom::Size padding;
-	};
-
-	// "Memoized" values can't be subscribed like they usually are due to the
-	// child elements' having separate style objects. Instead, manually mark the
-	// button as dirty to trigger recalculation.
+	// "Memoized" values can't subscribe to inputs like they usually would because
+	// child elements' inputs are separate and inaccessible. Instead, manually
+	// mark the button style as dirty to trigger recalculation.
 	bool dirty;
 
 	inline auto &markDirty(bool dirty = true) {
@@ -45,34 +34,28 @@ struct ButtonStyle {
 		return *this;
 	}
 
-	inline auto &setTextOffset(geom::Point textOffset) {
+	inline auto &useTextOffset(geom::Point textOffset) {
 		this->alignment = TextAlignment::from(TextAlignment1d::none);
 		this->textOffset = textOffset;
 		return *this;
 	}
 
-	inline auto &useTextOffset(geom::Point textOffset) {
-		packed = false;
-		return setTextOffset(textOffset);
-	}
-
-	inline auto &useTextAlignment(TextAlignment alignment, uint16_t offsetY) {
-		packed = false;
+	inline auto &useTextAlignment(TextAlignment alignment, geom::Point offset = {0, 0}) {
 		this->alignment = alignment;
-		this->textOffset.y = offsetY;
+		this->textOffset = offset;
 		dirty = true;
 		return *this;
 	}
 
 	inline auto &usePackedText(geom::Size padding = {0, 0}) {
-		packed = true;
-		this->padding = padding;
+		this->alignment = TextAlignment::from(TextAlignment1d::pack);
+		this->textOffset = geom::Point::from(geom_xy(padding));
 		dirty = true;
 		return *this;
 	}
 
 	inline ButtonStyle() {
-		setTextOffset({0, 0});
+		usePackedText({10, 6});
 	}
 };
 
@@ -94,50 +77,40 @@ private:
 	Box &box;
 	Text &text;
 
-	inline void calculateTextOffset(Display *tft) {
-		if (style.packed) {
-			// Render off-screen to get bounding box
-			tft->setCursor(tft->getDimensions());
-			text.renderTo(tft);
+	inline void calculateText(Display *tft) {
+		auto textBox = text.getBox(tft);
+		auto &boxStyle = box.getStyle();
 
-			box.getStyle()
-				.setSize(text.box.size + style.padding * 2);
+		using Align = ButtonStyle::TextAlignment1d;
 
-			return;
+#define calculateAlignment(axis) \
+		switch (style.alignment.axis) { \
+		default: \
+			break; \
 		}
 
-		// TODO refactor to allow packing both axes separately
-		switch (style.alignment.x) {
-		case ButtonStyle::TextAlignment1d::start:
-			style.textOffset.x = 0;
-			break;
-		case ButtonStyle::TextAlignment1d::center:
-			style.textOffset.x = (box.getStyle().size.x - text.box.size.x) / 2;
-			break;
-		case ButtonStyle::TextAlignment1d::end:
-			style.textOffset.x = box.getStyle().size.x - text.box.size.x;
-			break;
-		default:
-			// Ignore
-			break;
-		}
+		if (style.alignment.x == Align::pack)
+			boxStyle.setSize(geom::Size::from(textBox.size.x + style.textOffset.x * 2, boxStyle.size.y));
+		else
+			calculateAlignment(x);
+
+		if (style.alignment.y == Align::pack)
+			boxStyle.setSize(geom::Size::from(boxStyle.size.x, textBox.size.y + style.textOffset.y * 2));
+		else
+			calculateAlignment(y);
+
+#undef calculateAlignment
 	}
 
 	inline void renderTo(Display *tft) override {
 		if (style.dirty) {
-			calculateTextOffset(tft);
+			calculateText(tft);
 			style.markDirty(false);
 		}
 
 		box.renderTo(tft);
 
-		if (style.packed) {
-			tft->setCursor(box.getStyle().position + style.padding);
-		}
-		else {
-			tft->setCursor(box.getStyle().position + style.textOffset);
-		}
-
+		tft->setCursor(box.getStyle().position + style.textOffset);
 		text.renderTo(tft);
 	}
 };
