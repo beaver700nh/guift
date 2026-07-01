@@ -109,6 +109,10 @@ private:
 			geom_xy(&box.origin),
 			geom_xy(&box.size)
 		);
+
+		// getTextBounds() goes to the beginning of the next char; need to adjust it
+		// to the end of the the last char
+		box.size.x -= style.size;
 	}
 
 	inline void renderTo(Display *tft) override {
@@ -116,6 +120,18 @@ private:
 		tft->print(text);
 
 		tft->startWrite();
+
+		if (style.underline != color::transparent) {
+			tft->writeFillRect(
+				box.origin.x, box.origin.y + box.size.y - style._memo.decorThickness,
+				box.size.x, style._memo.decorThickness, style.underline);
+		}
+
+		if (style.strike != color::transparent) {
+			tft->writeFillRect(
+				box.origin.x, box.origin.y + (box.size.y >> 1) - style._memo.decorThickness,
+				box.size.x, style._memo.decorThickness, style.strike);
+		}
 
 #ifdef UI_DEBUG
 		tft->writeFastHLine(
@@ -131,18 +147,6 @@ private:
 			box.origin.x + box.size.x - 1, box.origin.y + 1,
 			box.size.y - 2, color::yellowGreen);
 #endif
-
-		if (style.underline != color::transparent) {
-			tft->writeFillRect(
-				box.origin.x, box.origin.y + box.size.y - style._memo.decorThickness,
-				box.size.x, style._memo.decorThickness, style.underline);
-		}
-
-		if (style.strike != color::transparent) {
-			tft->writeFillRect(
-				box.origin.x, box.origin.y + (box.size.y >> 1) - style._memo.decorThickness,
-				box.size.x, style._memo.decorThickness, style.strike);
-		}
 
 		tft->endWrite();
 	}

@@ -24,6 +24,10 @@ struct ButtonStyle {
 	TextAlignment alignment;
 	geom::Point textOffset;
 
+	struct {
+		geom::Point alignedOffset {0, 0};
+	} _memo;
+
 	// "Memoized" values can't subscribe to inputs like they usually would because
 	// child elements' inputs are separate and inaccessible. Instead, manually
 	// mark the button style as dirty to trigger recalculation.
@@ -40,11 +44,15 @@ struct ButtonStyle {
 		return *this;
 	}
 
-	inline auto &useTextAlignment(TextAlignment alignment, geom::Point offset = {0, 0}) {
+	inline auto &useTextAlignment(TextAlignment alignment, geom::Point textOffset = {0, 0}) {
 		this->alignment = alignment;
-		this->textOffset = offset;
+		this->textOffset = textOffset;
 		dirty = true;
 		return *this;
+	}
+
+	inline auto &useCenteredText() {
+		return useTextAlignment(TextAlignment::from(TextAlignment1d::center));
 	}
 
 	inline auto &usePackedText(geom::Size padding = {0, 0}) {
@@ -85,6 +93,12 @@ private:
 
 #define calculateAlignment(axis) \
 		switch (style.alignment.axis) { \
+		case Align::right: \
+			style._memo.alignedOffset.axis = boxStyle.size.axis - textBox.size.axis; \
+			break; \
+		case Align::center: \
+			style._memo.alignedOffset.axis = (boxStyle.size.axis - textBox.size.axis) / 2; \
+			break; \
 		default: \
 			break; \
 		}
@@ -110,7 +124,7 @@ private:
 
 		box.renderTo(tft);
 
-		tft->setCursor(box.getStyle().position + style.textOffset);
+		tft->setCursor(box.getStyle().position + style.textOffset + style._memo.alignedOffset);
 		text.renderTo(tft);
 	}
 };

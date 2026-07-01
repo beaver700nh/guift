@@ -62,7 +62,7 @@ void setup() {
 			.useTextOffset({15, 30}),
 
 			Box {BoxStyle {}
-				.setSize({220, 50})
+				.setSize({200, 50})
 				.setPosition({80, 170})
 				.setRoundness(-1)
 				.setThickness(5)},
@@ -72,16 +72,43 @@ void setup() {
 				.setStrike(+guift::color::pink)}}
 	);
 
-	tft.render(
-		Button {ButtonStyle {},
+	for (int8_t j = -1; j <= 1; ++j)
+		for (int8_t i = -1; i <= 1; ++i)
+			tft.render(
+				Button {ButtonStyle{}
+					.useTextAlignment({
+						i == -1 ? Button::Align::left : (i == 0 ? Button::Align::center : Button::Align::right),
+						j == -1 ? Button::Align::top : (j == 0 ? Button::Align::center : Button::Align::bottom),
+					}, guift::geom::Point {i, j} * -1),
 
-			Box {BoxStyle {}
-				.setPosition({80, 240})},
-			Text {"Button #3\nsays hello!", TextStyle {}
-				.setSize(2)
-				.setFg(guift::color::cyan)}
-		}
-	);
+					Box {BoxStyle {}
+						.setSize({16, 16})
+						.setPosition(guift::geom::Point::from(10 + 20 * (i + 1), 240 + 20 * (j + 1)))
+						.setFill(+guift::color::maroon)
+						.setBorder(guift::color::transparent)},
+					Text {"A", TextStyle {}
+						.setSize(1)
+						.setFg(guift::color::white)}}
+			);
+
+	// lvalues test
+
+	Box box {BoxStyle {}
+		.setSize({200, 0})
+		.setPosition({80, 240})
+		.setBorder(+guift::color::olive)
+		.setFill(+guift::color::darkGreen)};
+
+	Text text {"Button\nsays hi", TextStyle {}
+		.setSize(3)
+		.setFg(guift::color::yellowGreen)};
+
+	Button btn {ButtonStyle {}
+		.useTextAlignment({Button::Align::right, Button::Align::pack}, {-10, 30}),
+
+		box, text};
+
+	tft.render(btn);
 }
 
 void loop() {
@@ -90,9 +117,9 @@ void loop() {
 	static unsigned long last = 0;
 	static bool flag = false;
 	static Box box {BoxStyle {}
-		.setSize({40, 200})
-		.setThickness(4)
-		.setRoundness(100)};
+		.setSize({30, 150})
+		.setThickness(5)
+		.setRoundness(-1)};
 	static auto color = box.getStyle().border;
 
 	auto now = millis();
