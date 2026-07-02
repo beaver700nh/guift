@@ -67,6 +67,8 @@ struct ButtonStyle {
 	}
 };
 
+// TODO add partial erasure / dirtiness system
+
 class Button: public _BaseElement<ButtonStyle> {
 public:
 	inline Button() = delete;
